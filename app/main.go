@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	. "./users"
+
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -27,7 +29,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("User: ", user, "added")
 }
-
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	userList := make([]User, 0)
 	for _, value := range Users {
@@ -35,7 +36,6 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(userList)
 }
-
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
@@ -48,7 +48,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not Found", http.StatusNotFound)
 	}
 }
-
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
@@ -65,13 +64,12 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	Users = make(map[int]User)
-	log.Println("Default Users: ", Users)
+	log.Println("Default users: ", Users)
 	router := mux.NewRouter()
 	router.HandleFunc("/users", CreateUser).Methods("POST")
 	router.HandleFunc("/users", GetUsers).Methods("GET")
-	router.HandleFunc("/users{id}", GetUser).Methods("GET")
-	router.HandleFunc("/users{id}", DeleteUser).Methods("DELETE")
+	router.HandleFunc("/users/{id}", GetUser).Methods("GET")
+	router.HandleFunc("/users/{id}", DeleteUser).Methods("DELETE")
 	log.Println("Listening on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
-
 }
